@@ -15,6 +15,10 @@ import urllib.request
 BASE = "http://localhost:7878"
 FAILURES: list[str] = []
 
+# A system-wide HTTP proxy (Windows Internet Settings) would otherwise swallow
+# loopback requests and answer with an empty 404. Local traffic must bypass it.
+OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+
 
 def call(method, path, body=None, token=None):
     data = json.dumps(body).encode() if body is not None else None
@@ -24,7 +28,7 @@ def call(method, path, body=None, token=None):
     if token:
         request.add_header("Authorization", "Bearer " + token)
     try:
-        with urllib.request.urlopen(request) as response:
+        with OPENER.open(request) as response:
             return response.status, response.read().decode()
     except urllib.error.HTTPError as exc:
         return exc.code, exc.read().decode()

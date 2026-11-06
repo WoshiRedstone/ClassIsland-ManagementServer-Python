@@ -15,6 +15,13 @@ if not exist "%PYTHON%" (
 
 set PYTHONPATH=%~dp0protos
 
+rem Stale __pycache__ directories make Nuitka see the same module twice and abort
+rem with: AssertionError: ...\out\main.build\module.Protobuf.c
+rem (nuitka\tree\SourceHandling.py, `assert not os.path.isfile(filename)`).
+if exist "%~dp0app" for /d /r "%~dp0app" %%D in (__pycache__) do @if exist "%%D" rmdir /s /q "%%D"
+if exist "%~dp0protos" for /d /r "%~dp0protos" %%D in (__pycache__) do @if exist "%%D" rmdir /s /q "%%D"
+if exist "%~dp0tests" for /d /r "%~dp0tests" %%D in (__pycache__) do @if exist "%%D" rmdir /s /q "%%D"
+
 "%PYTHON%" -m nuitka ^
     --mingw64 ^
     --assume-yes-for-downloads ^
@@ -78,6 +85,17 @@ for %%F in (
     ) else (
         echo [WARN] Missing runtime DLL: %CONDA_BIN%\%%F
     )
+)
+
+rem The `Build finished` line below is only an echo: Nuitka can report success to
+rem the console while the executable never materialised (e.g. an aborted link).
+rem Fail loudly instead of shipping an empty dist directory.
+if not exist "%DIST%\ManagementServer.exe" (
+    echo [ERROR] Build reported success but %DIST%\ManagementServer.exe is missing.
+    exit /b 1
+)
+if not exist "%DIST%\static\index.html" (
+    echo [WARN] WebUI assets missing: %DIST%\static\index.html
 )
 
 echo.

@@ -88,7 +88,7 @@ function Get-TypeOf([string]$Name) {
 }
 
 function Invoke-Json([string]$Url) {
-    $r = Invoke-WebRequest -Uri "$BaseUrl$Url" -UseBasicParsing -TimeoutSec 30
+    $r = Invoke-WebRequest -Uri "$BaseUrl$Url" -UseBasicParsing -TimeoutSec 30 -NoProxy
     if ($r.StatusCode -ne 200) { throw "$Url -> HTTP $($r.StatusCode)" }
     return $r.Content
 }
@@ -111,6 +111,9 @@ function Invoke-Api {
         Headers         = $headers
         UseBasicParsing = $true
         TimeoutSec      = 30
+        # Windows 上若配置了系统代理而 ProxyOverride 未包含 127.0.0.1，
+        # Invoke-WebRequest 会把本地请求也发给代理并收到 404。
+        NoProxy         = $true
     }
     if ($null -ne $Body) {
         $params["ContentType"] = "application/json; charset=utf-8"

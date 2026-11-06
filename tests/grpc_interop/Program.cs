@@ -92,7 +92,12 @@ internal static class Program
         }
 
         Console.WriteLine($"gRPC {_grpcAddress} / HTTP {_httpAddress} / cuid {_clientGuid}");
-        using var channel = GrpcChannel.ForAddress(_grpcAddress);
+        // A system-wide HTTP proxy (Windows Internet Settings) otherwise intercepts
+        // loopback traffic and breaks both HTTP/2 upgrade and the REST calls below.
+        using var channel = GrpcChannel.ForAddress(_grpcAddress, new GrpcChannelOptions
+        {
+            HttpHandler = new SocketsHttpHandler { UseProxy = false, EnableMultipleHttp2Connections = true },
+        });
 
         await TestMetadataValidation(channel);
         var manifest = await TestRegister(channel);
@@ -173,7 +178,7 @@ internal static class Program
         }
 
         // 真实客户端注册成功后立刻拉 manifest（ManagementServerConnection.RegisterAsync :177）
-        var http = new HttpClient();
+        var http = new HttpClient(new HttpClientHandler { UseProxy = false });
         var url = $"{_httpAddress}/api/v1/client/{_clientGuid}/manifest";
         var json = await http.GetStringAsync(url);
         using var doc = JsonDocument.Parse(json);
@@ -304,7 +309,7 @@ internal static class Program
     {
         Console.WriteLine("==> REST 命令投递（show-notification / restart-app）");
         var token = await Login();
-        var http = new HttpClient();
+        var http = new HttpClient(new HttpClientHandler { UseProxy = false });
         http.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
         var notifyBody = JsonSerializer.Serialize(new
@@ -393,7 +398,7 @@ internal static class Program
 
     private static async Task<string> Login()
     {
-        var http = new HttpClient();
+        var http = new HttpClient(new HttpClientHandler { UseProxy = false });
         var body = JsonSerializer.Serialize(new { username = "root", password = "root" });
         var rsp = await http.PostAsync($"{_httpAddress}/api/v1/auth/login",
             new StringContent(body, Encoding.UTF8, "application/json"));
@@ -406,4 +411,3 @@ internal static class Program
     {
     }
 }
-

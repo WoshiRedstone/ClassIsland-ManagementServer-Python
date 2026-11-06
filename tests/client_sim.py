@@ -61,7 +61,9 @@ def rest_login(client: httpx.Client) -> None:
 
 
 def main() -> int:
-    api = httpx.Client(timeout=20.0, follow_redirects=False)
+    # trust_env=False: a system-wide HTTP proxy would otherwise intercept the
+    # loopback calls and answer every request with an empty 404.
+    api = httpx.Client(timeout=20.0, follow_redirects=False, trust_env=False)
     rest_login(api)
 
     cuid = str(uuid.uuid4())

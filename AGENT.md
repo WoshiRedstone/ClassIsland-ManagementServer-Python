@@ -155,10 +155,17 @@ $env:PYTHONPATH = "$PWD\protos"          # 必需，否则 import Protobuf 失�
 ## 编译（Nuitka）
 
 ```powershell
-# 先停掉正在运行的 exe，否则 Nuitka 收尾会 PermissionError: [Errno 13]
+# 1) 先停掉正在运行的 exe，否则 Nuitka 收尾会 PermissionError: [Errno 13]
 Get-Process ManagementServer -ErrorAction SilentlyContinue | Stop-Process -Force
+# 2) 清掉所有 __pycache__，否则 Nuitka 会崩在 AssertionError（见下）
+Get-ChildItem app,tests,protos -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
+Remove-Item -Recurse -Force out -ErrorAction SilentlyContinue
 cd $PWD; cmd /c build_exe.bat
 ```
+
+⚠️ **`AssertionError: ...\out\main.build\module.Protobuf.c`**（`nuitka\tree\SourceHandling.py`
+`assert not os.path.isfile(filename)`）几乎总是 `protos\__pycache__` 之类的旧缓存导致的
+模块重复注册，清掉所有 `__pycache__` 与 `out\` 后重跑即可。
 
 产物：`out\main.dist\ManagementServer.exe`（约 112 MB，整目录约 162 MB）。
 
@@ -211,6 +218,18 @@ robocopy out\main.dist release /E /XD data      # 排除 data，首次启动自�
   所以 PGP 握手是真的加解密（不是打桩）。
 - 两个 C# 项目都用 `ClientBin` 定位客户端产物，可用
   `dotnet build -p:ClientBin=<path>` 或环境变量 `CLASSISLAND_CLIENT_BIN` 覆盖。
+
+⚠️ **本机有系统代理时测试会全线失败**：Windows「Internet 选项」里配了代理而
+`ProxyOverride` 不含 `127.0.0.1` 时，`Invoke-WebRequest`、`httpx`、
+`urllib.request`、`GrpcChannel` 都会把 loopback 请求发给代理，拿回**空 body 的 404**，
+表现为「所有接口都 404」这种假故障。各套件已内置绕过：
+
+- `tests/rest_e2e.py` → `urllib.request.build_opener(urllib.request.ProxyHandler({}))`
+- `tests/client_sim.py` → `httpx.Client(..., trust_env=False)`
+- `tests/contract_test.ps1`、`tests/seed_demo_profile.ps1` → `-NoProxy`
+- `tests/grpc_interop/Program.cs` → `SocketsHttpHandler { UseProxy = false }`
+
+新写脚本时照抄对应做法，否则会在装了代理的机器上得到无法解释的 404。
 
 ### WebUI 浏览器验证
 

@@ -1,6 +1,29 @@
+param(
+    [string]$BaseUrl = "http://127.0.0.1:7878",
+    [string]$GrpcTarget = "127.0.0.1:7879",
+    # 真实客户端的 CUID 来自 %LOCALAPPDATA%\ClassIsland\Management\Persist.json 的
+    # ClientUniqueId；MAC 是客户端自算的首个非回环网卡地址。
+    [string]$Cuid = "c72c3297-f0f2-48a3-9fd8-b571a3ca5079",
+    [string]$ClientId = "test-class",
+    [string]$ClientMac = "00155DB50F63",
+    [string]$Username = "root",
+    [string]$Password = "root"
+)
+
 $ErrorActionPreference = "Stop"
-$base = "http://127.0.0.1:7878"
-$cuid = "c72c3297-f0f2-48a3-9fd8-b571a3ca5079"
+$base = $BaseUrl
+$grpcTarget = $GrpcTarget
+$cuid = $Cuid
+$clientId = $ClientId
+$clientMac = $ClientMac
+
+# 服务端只会向已通过 gRPC 注册的客户端分发数据：干净数据库里这个 CUID 不存在，
+# 此时 manifest 会 404，后面的分配步骤也会报「找不到请求的对象」。
+$python = Join-Path (Split-Path -Parent $PSScriptRoot) "miniconda3\envs\man\python.exe"
+$register = Join-Path $PSScriptRoot "register_client.py"
+if ((Test-Path $python) -and (Test-Path $register)) {
+    & $python $register --grpc $grpcTarget --cuid $cuid --id $clientId --mac $clientMac | Out-Null
+}
 
 function Api($method, $path, $body) {
     $params = @{
@@ -9,6 +32,8 @@ function Api($method, $path, $body) {
         Headers     = $script:headers
         ContentType = "application/json; charset=utf-8"
         UseBasicParsing = $true
+        # 系统代理的 ProxyOverride 通常不含 127.0.0.1，本地请求必须直连。
+        NoProxy     = $true
     }
     if ($null -ne $body) {
         $json = if ($body -is [string]) { $body } else { $body | ConvertTo-Json -Depth 10 }
@@ -19,7 +44,8 @@ function Api($method, $path, $body) {
     return $null
 }
 
-$login = Invoke-RestMethod -Uri "$base/api/v1/auth/login" -Method POST -ContentType "application/json" -Body '{"username":"root","password":"root"}'
+$loginBody = @{ username = $Username; password = $Password } | ConvertTo-Json
+$login = Invoke-RestMethod -Uri "$base/api/v1/auth/login" -Method POST -ContentType "application/json" -Body $loginBody -NoProxy
 $script:headers = @{ Authorization = "Bearer $($login.accessToken)" }
 
 # --- subject ---

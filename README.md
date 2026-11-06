@@ -75,7 +75,12 @@
 ./setup.sh       # Linux / macOS
 ```
 
-向导会交互式写入 `data/appsettings.json`，并创建 `root/root` 管理员与 7 个角色。
+向导会交互式写入 `data/appsettings.json`，并创建管理员账号与 7 个角色。
+
+提问顺序：**① 数据库类型（默认 `sqlite`）→ ② 仅 mysql 时填连接信息并试连 → ③ WebUI/API 地址 →
+④ gRPC 地址 → ⑤ root 密码（两次）**。选了 mysql 但连不上时，向导会显示原因并询问是否重新填写，
+不会写出一个连不上的配置。
+
 也可以非交互运行（已有配置文件时直接跳过向导）：
 
 ```powershell
@@ -159,13 +164,14 @@ cd out\main.dist
 
 ## 发行包（release\）
 
-`release\` 是可直接分发给最终用户的自包含目录（109 个文件 / 约 162 MB）：
+`release\` 是可直接分发给最终用户的自包含目录（108 个文件 / 约 162 MB）。
+发布到 GitHub Release 时打包成 `ClassIsland-ManagementServer-Python-win64.zip`（约 57 MB）。
 
 ```
 ManagementServer.exe    服务端主程序（含全部 Python 运行时）
 static\                 WebUI 前端静态资源（54 个文件）
 *.dll / *.pyd           Python 运行时与扩展模块（含 ffi-8/ffi-7/ffi、libssl、libcrypto、sqlite3 等）
-README.md               面向前言用户的说明（含向导 6 步提问顺序）
+README.md               面向最终用户的说明（含向导提问顺序）
 setup.ps1 / setup.sh    首次安装向导（内部自动加 --setup=true）
 start.ps1 / start.sh    服务启动器（参数原样透传）
 ```
@@ -173,11 +179,11 @@ start.ps1 / start.sh    服务启动器（参数原样透传）
 - 脚本用自身所在目录定位 `ManagementServer.exe`，因此**整个文件夹可以任意移动**。
 - 不含 `data\`：首次启动自动创建 `data\management.db` 并播种默认账号 `root/root`。
 - `release\ManagementServer.exe` 与 `out\main.dist\ManagementServer.exe` 的 SHA256 一致
-  （`02C93F744FF8E85D47B55056EBAE179E0FD8C98D8F71FDC601AE64139FB8D80D`），
+  （`EB968DF94D28A0A52AA43D9D0C7BD98085419E865CD8172EB1BFE07BC5E321C3`，112,467,968 B），
   因此六套测试对 `out` 产物跑通即对 release 有效。
 - 已验证：`.\start.ps1` 冷启动 → `root/root` 登录 200、WebUI `/` 200；
-  在纯净副本上 `ManagementServer.exe --setup=true` 走完 6 步向导 → 新密码 `testpass123` 登录 200、
-  `root/root` 被拒（证明向导生效）。
+  在纯净副本上 `ManagementServer.exe --setup=true` 一路回车走完向导（默认 sqlite）→
+  写入的 `DatabaseType` 为 `"sqlite"`，向导输入的密码可登录、`root/root` 被拒（证明向导生效）。
 
 ---
 
