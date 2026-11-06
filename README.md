@@ -191,6 +191,15 @@ start.ps1 / start.sh    服务启动器（参数原样透传）
 
 全部测试都可以直接对编译产物运行（先启动服务端）。
 
+一条命令跑完整验收（自己冷启动 `release\` 里的产物、验完自动停）：
+
+```powershell
+pwsh -NoProfile -File tests\verify_release.ps1
+```
+
+它先检查 WebUI 静态托管与 `root/root` 登录，再依次跑下表六套测试并打印 PASS/FAIL 汇总；
+已经起好服务端时加 `-SkipStart` 直接复用。
+
 | 测试 | 命令 | 覆盖 |
 | --- | --- | --- |
 | REST e2e | `python tests/rest_e2e.py` | 约 60 项：全部 REST 路由、鉴权、分页、CRUD |

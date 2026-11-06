@@ -201,6 +201,11 @@ robocopy out\main.dist release /E /XD data      # 排除 data，首次启动自�
 服务端必须先启动（源码或编译产物均可）。全部套件都能在**全新空数据库**上直接跑，
 不需要任何手工前置——它们会自己注册客户端、自己播种组织名和演示档案。
 
+想一条命令跑完全部验收，用 `pwsh -File tests/verify_release.ps1`：它自己冷启动
+`release\ManagementServer.exe`（先清 `data\`）、检查 WebUI 静态托管与 `root/root`
+登录，再依次调用下表六套测试，最后打印 PASS/FAIL 汇总并以退出码反映结果。
+已经有实例在跑时加 `-SkipStart` 复用。**这是发布前唯一需要手动执行的命令。**
+
 | 套件 | 命令 | 断言数 | 需要 |
 | --- | --- | --- | --- |
 | REST e2e | `python tests/rest_e2e.py` | ~60 | — |
