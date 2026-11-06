@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <AssemblyName>Probe</AssemblyName>
+    <!-- 真实 ClassIsland 客户端产物目录，可用 -p:ClientBin=<path> 或环境变量覆盖。 -->
+    <ClientBin Condition="'$(ClientBin)' == '' and '$(CLASSISLAND_CLIENT_BIN)' != ''">$(CLASSISLAND_CLIENT_BIN)</ClientBin>
+    <ClientBin Condition="'$(ClientBin)' == ''">C:\ClassIsland-debug\ClassIsland.Desktop\bin\Debug\net8.0-windows10.0.19041.0</ClientBin>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PgpCore"><HintPath>$(ClientBin)\PgpCore.dll</HintPath></Reference>
+    <Reference Include="BouncyCastle.Cryptography"><HintPath>$(ClientBin)\BouncyCastle.Cryptography.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

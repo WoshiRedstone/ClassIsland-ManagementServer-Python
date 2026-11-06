@@ -1,0 +1,75 @@
+# ---------------------------------------------------------------- Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# -------------------------------------------------- runtime data / secrets
+# data/ 由程序首次启动自动生成（appsettings.json + management.db），
+# 里面可能含有数据库口令与 PGP 私钥，绝对不要提交。
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.log
+startup_error.log
+nuitka-crash-report.xml
+*.pem
+*.asc
+*.key
+
+# ------------------------------------------------------------- build output
+out/
+build/
+release/
+*.build/
+*.dist/
+*.onefile-build/
+*.deb
+*.rpm
+
+# ------------------------------------------- bundled toolchain / installer
+# 体积过大，且可用 AGENT.md 中记录的官方地址下载。
+miniconda3/
+setup/miniconda.exe
+setup/*.exe
+
+# ------------------------------------------------------------- frontend
+webui-src/node_modules/
+webui-src/dist/
+webui-src/.vite/
+webui-src/*.tsbuildinfo
+
+# ------------------------------------ upstream C# reference implementation
+# 上游仓库的克隆，仅用于对照阅读，见 AGENT.md 的「如何获取上游源码」。
+vendor/
+
+# --------------------------------------------------- test build artifacts
+tests/**/bin/
+tests/**/obj/
+
+# ------------------------------------------------------------- local scratch
+_*.py
+_*.ps1
+_*.sh
+_*.log
+_*.txt
+_*.pdf
+_*/
+*.bak
+*.orig
+*.rej
+
+# ------------------------------------------------------------- editor files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.DotSettings.user
+Thumbs.db
+desktop.ini
+.DS_Store

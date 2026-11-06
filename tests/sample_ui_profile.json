@@ -1,0 +1,67 @@
+{
+  "Name": "",
+  "TimeLayouts": {
+    "bbbbbbbb-1111-2222-3333-444444444444": {
+      "IsOverlay": false,
+      "OverlaySourceId": null,
+      "Name": "UI上传时间表",
+      "Layouts": [
+        {
+          "StartSecond": "2025-08-26T08:00:00+08:00",
+          "EndSecond": "2025-08-26T08:45:00+08:00",
+          "StartTime": "08:00:00",
+          "EndTime": "08:45:00",
+          "TimeType": 0,
+          "IsHideDefault": false,
+          "DefaultClassId": "00000000-0000-0000-0000-000000000000",
+          "BreakName": "",
+          "ActionSet": null,
+          "AttachedObjects": {},
+          "IsActive": false
+        }
+      ],
+      "AttachedObjects": {},
+      "IsActive": false
+    }
+  },
+  "ClassPlans": {
+    "cccccccc-1111-2222-3333-444444444444": {
+      "TimeLayoutId": "bbbbbbbb-1111-2222-3333-444444444444",
+      "TimeRule": { "WeekDay": 0, "WeekCountDiv": 0, "WeekCountDivTotal": 2, "IsActive": false },
+      "Classes": [
+        { "SubjectId": "aaaaaaaa-1111-2222-3333-444444444444", "IsChangedClass": false, "IsEnabled": true, "AttachedObjects": {}, "IsActive": false }
+      ],
+      "Name": "UI上传课表",
+      "IsOverlay": false,
+      "OverlaySourceId": null,
+      "OverlaySetupTime": "2025-08-26T00:00:00+08:00",
+      "IsEnabled": true,
+      "AssociatedGroup": "acaf4ef0-e261-4262-b941-34ea93cb4369",
+      "AttachedObjects": {},
+      "IsActive": false
+    }
+  },
+  "Subjects": {
+    "aaaaaaaa-1111-2222-3333-444444444444": {
+      "Name": "UI上传科目",
+      "Initial": "UI",
+      "TeacherName": "",
+      "IsOutDoor": false,
+      "AttachedObjects": {},
+      "IsActive": false
+    }
+  },
+  "IsOverlayClassPlanEnabled": false,
+  "OverlayClassPlanId": null,
+  "TempClassPlanId": null,
+  "TempClassPlanSetupTime": "2025-08-26T00:00:00+08:00",
+  "ClassPlanGroups": {},
+  "SelectedClassPlanGroupId": "acaf4ef0-e261-4262-b941-34ea93cb4369",
+  "TempClassPlanGroupId": null,
+  "TempClassPlanGroupExpireTime": "2025-08-26T00:00:00+08:00",
+  "TempClassPlanGroupType": 1,
+  "IsTempClassPlanGroupEnabled": false,
+  "Id": "00000000-0000-0000-0000-000000000000",
+  "OrderedSchedules": {},
+  "IsActive": false
+}

@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>GrpcClientInterop</AssemblyName>
+    <RootNamespace>GrpcClientInterop</RootNamespace>
+    <NoWarn>$(NoWarn);CS0618</NoWarn>
+    <!-- 真实的 ClassIsland 客户端产物目录。默认值面向本机调试环境，其他机器用
+         dotnet build -p:ClientBin=<你的路径> 覆盖，或先设置环境变量再构建。 -->
+    <ClientBin Condition="'$(ClientBin)' == '' and '$(CLASSISLAND_CLIENT_BIN)' != ''">$(CLASSISLAND_CLIENT_BIN)</ClientBin>
+    <ClientBin Condition="'$(ClientBin)' == ''">C:\ClassIsland-debug\ClassIsland.Desktop\bin\Debug\net8.0-windows10.0.19041.0</ClientBin>
+  </PropertyGroup>
+
+  <!-- Reference the assemblies the real ClassIsland client ships with, so this
+       harness exercises exactly the same protobuf messages, gRPC stack and PGP
+       implementation that a real client would use. -->
+  <ItemGroup>
+    <Reference Include="$(ClientBin)\ClassIsland.Shared.dll" />
+    <Reference Include="$(ClientBin)\Google.Protobuf.dll" />
+    <Reference Include="$(ClientBin)\Grpc.Core.Api.dll" />
+    <Reference Include="$(ClientBin)\Grpc.Net.Client.dll" />
+    <Reference Include="$(ClientBin)\Grpc.Net.Common.dll" />
+    <Reference Include="$(ClientBin)\PgpCore.dll" />
+    <Reference Include="$(ClientBin)\BouncyCastle.Cryptography.dll" />
+    <Reference Include="$(ClientBin)\CommunityToolkit.Mvvm.dll" />
+    <Reference Include="$(ClientBin)\Microsoft.Extensions.Hosting.Abstractions.dll" />
+    <Reference Include="$(ClientBin)\Microsoft.Extensions.Logging.Abstractions.dll" />
+    <Reference Include="$(ClientBin)\Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+    <Reference Include="$(ClientBin)\Microsoft.Extensions.Configuration.Abstractions.dll" />
+  </ItemGroup>
+
+</Project>

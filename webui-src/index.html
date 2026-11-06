@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" id="htmlRoot" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+  <meta content="webkit" name="renderer"/>
+  <meta
+    content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0"
+    name="viewport"
+  />
+  <link href="/favicon.ico" rel="icon"/>
+  <meta name="robots" content="noindex">
+  <title><%= title %></title>
+</head>
+<body>
+<div id="appProvider" style="display: none"></div>
+<div id="app">
+  <style>
+    #logo {
+      margin: auto;
+    }
+    
+    .loading-wrap {
+      display: flex;
+      justify-items: center;
+      
+    }
+
+    .first-loading-wrap {
+      display: flex;
+      width: 100%;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    
+    body {
+      margin: 0;
+      background: #f6f8fa;
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #101014;
+      }
+    }
+
+    .circle-loader {
+      margin-top: 32px;
+      border: 3px solid #00bfff55;
+      border-top: 3px solid #00bfff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      min-height: 24px;
+      max-width: 24px;
+      max-height: 24px;
+      box-sizing: border-box;
+      animation: spin 1s cubic-bezier(0.75, 0.1, 0.25, 0.9) infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+  <div class="first-loading-wrap">
+    <div class="loading-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" id="logo"
+           viewBox="-64 -64 320 320" width="160" height="160">
+        <defs>
+          <style>
+            .a{isolation:isolate;}.b{opacity:0.2;mix-blend-mode:multiply;}.c{fill:#e2e2e2;}.d{fill:#999;}.e{fill:#959595;}.f{fill:#f6f6f6;}.g{fill:#ccc;}.h{fill:#00bfff;}.i{fill:url(#a);}</style>
+          <linearGradient id="a" x1="90" y1="126" x2="154.97" y2="190.97"
+                          gradientUnits="userSpaceOnUse">
+            <stop offset="0.32" stop-opacity="0.15" />
+            <stop offset="0.62" stop-opacity="0.02" />
+            <stop offset="1" stop-opacity="0" />
+          </linearGradient>
+          <filter id="shadow" x="0" y="0" width="200%" height="200%">
+            <feDropShadow xmlns="http://www.w3.org/2000/svg" dx="0" dy="16" stdDeviation="16" flood-color="black" flood-opacity="0.2"/>
+          </filter>
+        </defs>
+        <title>AppLogo</title>
+        <g class="a" filter="url(#shadow)">
+          <path class="c" d="M177.94,160H56V100H177.94a8,8,0,0,1,8,8v44A8,8,0,0,1,177.94,160Z" />
+          <rect class="d" x="70.01" y="115" width="30" height="30" />
+          <rect class="d" x="107.51" y="115" width="30" height="30" />
+          <rect class="d" x="145" y="115" width="30" height="30" />
+          <polygon class="e" points="124 32 56 100 56 160 124 92 124 32" />
+          <path class="f" d="M124,92H16a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8H124Z" />
+          <rect class="g" x="20" y="44.53" width="30" height="30" />
+          <rect class="h" x="56" y="44.53" width="58.02" height="30" />
+          <polygon class="i" points="116 100 56 160 185.94 160 185.94 153.94 132 100 116 100" />
+        </g>
+      </svg>
+      
+    </div>
+    <div class="circle-loader"></div>
+  </div>
+</div>
+<script>var globalThis = window;</script>
+<script src="/src/main.ts" type="module"></script>
+</body>
+</html>
