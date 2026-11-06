@@ -50,10 +50,17 @@ def check(label, status, wanted, extra=None):
 
 
 def find(items, key, value):
+    """Return the NEWEST item matching ``key == value``.
+
+    Listings are ordered by ``CreatedTime`` ascending, so a fixed test name
+    that already exists from an earlier run would otherwise resolve to the
+    stale object and the teardown would delete the wrong row.
+    """
+    match = None
     for item in items:
         if item.get(key) == value:
-            return item
-    return None
+            match = item
+    return match
 
 
 def main() -> int:
