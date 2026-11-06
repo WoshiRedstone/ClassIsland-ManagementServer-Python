@@ -3,8 +3,12 @@
     对 release 目录里的编译产物做一次完整验收：冷启动 + 六套测试 + WebUI 静态托管。
 
 .DESCRIPTION
-    本脚本自己负责启动/停止服务端（用 Start-Process 拉起，**不重定向标准输出**，
-    因为重定向会让子进程挂在本进程的管道上，本进程一退出子进程就收到 SIGPIPE/写失败而死）。
+    本脚本自己负责启动/停止服务端（用 Start-Process 拉起）。
+
+    **必须把子进程的标准输出/错误重定向到文件**：不重定向时子进程会继承本进程的
+    控制台/管道句柄，本进程一退出（脚本结束或工具调用结束）子进程就写失败而死，
+    表现为后续测试全部 `WinError 10061 目标计算机积极拒绝`。
+    重定向到文件等于让子进程脱离管道，才能跨脚本、跨工具调用存活。
 
     已经跑起来的服务端也可以用 -SkipStart 跳过启动，直接对着现有实例跑测试。
 
@@ -72,8 +76,12 @@ try {
         if (Test-Path $dataDir) { Remove-Item -Recurse -Force $dataDir }
         $exe = Join-Path $ReleaseDir 'ManagementServer.exe'
         if (-not (Test-Path $exe)) { throw "缺少产物 $exe" }
-        # 关键：不重定向标准输出/错误，否则子进程会挂在本进程的管道上。
-        $serverProc = Start-Process -FilePath $exe -WorkingDirectory $ReleaseDir -PassThru
+        # 关键：标准输出/错误重定向到文件，让子进程脱离本进程的控制台/管道句柄，
+        # 否则本脚本一退出子进程就写失败而死（后续测试全部 WinError 10061）。
+        $outLog = Join-Path $repoRoot '_release_server.out.log'
+        $errLog = Join-Path $repoRoot '_release_server.err.log'
+        $serverProc = Start-Process -FilePath $exe -WorkingDirectory $ReleaseDir -PassThru `
+            -RedirectStandardOutput $outLog -RedirectStandardError $errLog
         Write-Host "    启动 pid=$($serverProc.Id)"
         $deadline = (Get-Date).AddSeconds($StartupTimeoutSec)
         while ((Get-Date) -lt $deadline) {
