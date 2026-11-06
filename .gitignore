@@ -58,6 +58,7 @@ _*.sh
 _*.log
 _*.txt
 _*.pdf
+_*.md
 _*/
 *.bak
 *.orig
